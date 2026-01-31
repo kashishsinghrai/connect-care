@@ -29,11 +29,9 @@ public class User {
 
     private LocalDate dob;
 
-    @ManyToMany(fetch = FetchType.EAGER , cascade =
-            {CascadeType.DETACH , CascadeType.MERGE , CascadeType.ALL , CascadeType.REFRESH})
-    @JoinTable(name = "user_roles", joinColumns=@JoinColumn(name ="user_id" , referencedColumnName = "id" ),
-            inverseJoinColumns = @JoinColumn(name = "role_id" , referencedColumnName = "id"))
-    private Collection<Role> roles =new HashSet<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH })
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles = new HashSet<>();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
@@ -43,7 +41,6 @@ public class User {
 
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<Appointment> doctorAppointments;
-
 
     public Long getId() {
         return id;

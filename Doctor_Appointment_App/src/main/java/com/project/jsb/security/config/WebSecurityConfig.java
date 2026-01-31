@@ -23,7 +23,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.security.oauth2.jwt.Jwt;
-
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import java.util.Arrays;
 
 @EnableWebSecurity
 @Configuration
@@ -33,14 +36,14 @@ public class WebSecurityConfig {
     private final JwtAuthEntryPoint authEntryPoint;
     private final JwtUtils jwtUtils;
 
-    public WebSecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint, JwtUtils jwtUtils) {
+    public WebSecurityConfig(CustomUserDetailsService userDetailsService, JwtAuthEntryPoint authEntryPoint,
+            JwtUtils jwtUtils) {
         this.userDetailsService = userDetailsService;
         this.authEntryPoint = authEntryPoint;
         this.jwtUtils = jwtUtils;
     }
 
     private static final List<String> SECURED_URLS = List.of("/api/v1/testing/**");
-
 
     @Bean
     public AtomicLong atomicLong() {
@@ -73,7 +76,8 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf(AbstractHttpConfigurer::disable)
+        http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated()
                         .anyRequest().permitAll())
@@ -83,65 +87,75 @@ public class WebSecurityConfig {
 
         return http.build();
 
-
-//        return http
-//                .cors(Customizer.withDefaults())
-//                .csrf(AbstractHttpConfigurer::disable)
-//                .exceptionHandling(exception->exception.authenticationEntryPoint(authEntryPoint))
-//                .authorizeHttpRequests(request -> request
-//                        .requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated().anyRequest().permitAll()
-//                )
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .httpBasic(Customizer.withDefaults())
-//                .authenticationProvider(daoAuthenticationProvider()).addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class)
-//                .oauth2ResourceServer(oauth -> oauth
-//                        .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter()))
-//                )
-//                .build();
-
+        // return http
+        // .cors(Customizer.withDefaults())
+        // .csrf(AbstractHttpConfigurer::disable)
+        // .exceptionHandling(exception->exception.authenticationEntryPoint(authEntryPoint))
+        // .authorizeHttpRequests(request -> request
+        // .requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated().anyRequest().permitAll()
+        // )
+        // .sessionManagement(session ->
+        // session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        // .httpBasic(Customizer.withDefaults())
+        // .authenticationProvider(daoAuthenticationProvider()).addFilterBefore(authTokenFilter(),
+        // UsernamePasswordAuthenticationFilter.class)
+        // .oauth2ResourceServer(oauth -> oauth
+        // .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter()))
+        // )
+        // .build();
 
     }
 
+    // JwtAuthenticationConverter jwtAuthConverter() {
+    // JwtGrantedAuthoritiesConverter jwtAuth = new
+    // JwtGrantedAuthoritiesConverter();
+    // jwtAuth.setAuthoritiesClaimName("roles");
+    // jwtAuth.setAuthorityPrefix("");
+    // JwtAuthenticationConverter jwtConvertor = new JwtAuthenticationConverter();
+    // jwtConvertor.setJwtGrantedAuthoritiesConverter(jwtAuth);
+    // return jwtConvertor;
+    // }
+    // @Bean
+    // public JwtDecoder jwtDecoder() {
+    // return new JwtDecoder() {
+    // @Override
+    // public Jwt decode(String token) throws JwtException {
+    // try {
+    // // Use your custom validation logic
+    // JwtUtils jwtUtils = new JwtUtils(); // Ensure it's a Spring-managed bean
+    // if (!jwtUtils.validateToken(token)) {
+    // throw new JwtException("Invalid JWT token");
+    // }
+    //
+    // Claims claims = Jwts.parserBuilder()
+    // .setSigningKey(jwtUtils.key()) // Use your key
+    // .build()
+    // .parseClaimsJws(token)
+    // .getBody();
+    //
+    // return Jwt.withTokenValue(token)
+    // .claim("sub", claims.getSubject())
+    // .claim("id", claims.get("id"))
+    // .claim("roles", claims.get("roles"))
+    // .issuedAt(claims.getIssuedAt().toInstant())
+    // .expiresAt(claims.getExpiration().toInstant())
+    // .build();
+    // } catch (Exception e) {
+    // throw new JwtException("JWT validation failed: " + e.getMessage());
+    // }
+    // }
+    // };
+    // }
 
-//    JwtAuthenticationConverter jwtAuthConverter() {
-//        JwtGrantedAuthoritiesConverter jwtAuth = new JwtGrantedAuthoritiesConverter();
-//        jwtAuth.setAuthoritiesClaimName("roles");
-//        jwtAuth.setAuthorityPrefix("");
-//        JwtAuthenticationConverter jwtConvertor = new JwtAuthenticationConverter();
-//        jwtConvertor.setJwtGrantedAuthoritiesConverter(jwtAuth);
-//        return jwtConvertor;
-//    }
-//    @Bean
-//    public JwtDecoder jwtDecoder() {
-//        return new JwtDecoder() {
-//            @Override
-//            public Jwt decode(String token) throws JwtException {
-//                try {
-//                    // Use your custom validation logic
-//                    JwtUtils jwtUtils = new JwtUtils();  // Ensure it's a Spring-managed bean
-//                    if (!jwtUtils.validateToken(token)) {
-//                        throw new JwtException("Invalid JWT token");
-//                    }
-//
-//                    Claims claims = Jwts.parserBuilder()
-//                            .setSigningKey(jwtUtils.key())  // Use your key
-//                            .build()
-//                            .parseClaimsJws(token)
-//                            .getBody();
-//
-//                    return Jwt.withTokenValue(token)
-//                            .claim("sub", claims.getSubject())
-//                            .claim("id", claims.get("id"))
-//                            .claim("roles", claims.get("roles"))
-//                            .issuedAt(claims.getIssuedAt().toInstant())
-//                            .expiresAt(claims.getExpiration().toInstant())
-//                            .build();
-//                } catch (Exception e) {
-//                    throw new JwtException("JWT validation failed: " + e.getMessage());
-//                }
-//            }
-//        };
-//    }
-
-
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4000"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

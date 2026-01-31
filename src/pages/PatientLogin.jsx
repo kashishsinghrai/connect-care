@@ -53,11 +53,13 @@ function PatientLogin() {
           <FaLock className="absolute left-3 top-3 text-gray-400" />
           <input
             type="password"
+            name="password"
             className="w-full pl-10 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            autoComplete="current-password"
           />
         </div>
 

@@ -37,22 +37,22 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request)
-    {
+    @PostMapping({ "/login", "/patient/login", "/doctor/login", "/admin/login" })
+    public ResponseEntity<ApiResponse> login(@Valid @RequestBody LoginRequest request) {
         try {
-            Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+            Authentication authentication = authenticationManager
+                    .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            String jwt =jwtUtils.generateTokenForUser(authentication);
+            String jwt = jwtUtils.generateTokenForUser(authentication);
             CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-            JwtResponse jwtResponse = new JwtResponse(userDetails.getId() , jwt);
-            return ResponseEntity.ok(new ApiResponse("Login success" , jwtResponse));
+            JwtResponse jwtResponse = new JwtResponse(userDetails.getId(), jwt);
+            return ResponseEntity.ok(new ApiResponse("Login success", jwtResponse));
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage() , null));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiResponse(e.getMessage(), null));
         }
     }
 
-    @PostMapping("/patient/create")         // create a patient
+    @PostMapping("/patient/create") // create a patient
     public ResponseEntity<ApiResponse> createPatient(@Valid @RequestBody CreateUserRequest request) {
         try {
             UserDto userDto = userService.createPatient(request);

@@ -51,7 +51,7 @@ function Login({ onLoginSuccess }) {
 
     try {
       const response = await axios.post(
-        state === "Sign Up" 
+        state === "Sign Up"
           ? "http://localhost:8080/api/v1/public/patient/create"
           : "http://localhost:8080/api/v1/public/patient/login",
         state === "Sign Up" ? {
@@ -67,22 +67,22 @@ function Login({ onLoginSuccess }) {
       );
 
       const token = response.data.obj.token;
-      Cookies.set("jwt", token, { 
-        expires: 1, 
-        secure: true, 
+      Cookies.set("jwt", token, {
+        expires: 1,
+        secure: true,
         sameSite: "Strict",
         path: "/"
       });
 
       toast.success(state === "Sign Up" ? "Account created successfully!" : "Login successful!");
-      
+
       // Call the parent callback to update navbar state
       if (onLoginSuccess) {
         onLoginSuccess(token); // Pass the token to fetch profile image immediately
       }
-      
+
       navigate("/");
-      
+
     } catch (error) {
       const message = error.response?.data?.message || "An error occurred. Please try again.";
       toast.error(message);
@@ -93,7 +93,7 @@ function Login({ onLoginSuccess }) {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100 px-4">
-      <ToastContainer 
+      <ToastContainer
         position="top-center"
         autoClose={3000}
         hideProgressBar={false}
@@ -104,8 +104,8 @@ function Login({ onLoginSuccess }) {
         draggable
         pauseOnHover
       />
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -186,6 +186,7 @@ function Login({ onLoginSuccess }) {
                   value={formData.password}
                   onChange={handleChange}
                   required
+                  autoComplete={state === "Sign Up" ? "new-password" : "current-password"}
                 />
               </div>
             </div>
@@ -204,6 +205,7 @@ function Login({ onLoginSuccess }) {
                       value={formData.confirmPassword}
                       onChange={handleChange}
                       required
+                      autoComplete="new-password"
                     />
                   </div>
                 </div>

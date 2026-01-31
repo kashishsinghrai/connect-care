@@ -38,14 +38,14 @@ function DoctorLogin() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-12">
       <ToastContainer position="top-right" autoClose={3000} />
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <form 
+        <form
           className="bg-white shadow-xl rounded-3xl p-8 space-y-6 border border-blue-50"
           onSubmit={onSubmitHandler}
         >
@@ -78,11 +78,13 @@ function DoctorLogin() {
               </div>
               <input
                 type="password"
+                name="password"
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
               />
             </div>
           </div>
@@ -111,7 +113,7 @@ function DoctorLogin() {
           <div className="text-center text-sm text-gray-600 pt-2">
             <p>
               Admin?{' '}
-              <button 
+              <button
                 type="button"
                 onClick={() => navigate("/AdminLogin")}
                 className="text-blue-600 font-medium hover:underline focus:outline-none"

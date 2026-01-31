@@ -70,7 +70,7 @@ function DoctorSignup() {
         }
 
         setSuccessMessage("Doctor registered successfully!");
-        
+
         // Reset form
         setDoctor({
           firstName: "",
@@ -229,6 +229,7 @@ function DoctorSignup() {
                     onChange={handleChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
                     required
+                    autoComplete="new-password"
                   />
                 </div>
 
@@ -370,11 +371,10 @@ function DoctorSignup() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className={`w-full py-3 px-6 rounded-lg font-semibold text-white shadow-md transition-colors ${
-                  isSubmitting
+                className={`w-full py-3 px-6 rounded-lg font-semibold text-white shadow-md transition-colors ${isSubmitting
                     ? "bg-blue-400 cursor-not-allowed"
                     : "bg-blue-600 hover:bg-blue-700"
-                }`}
+                  }`}
               >
                 {isSubmitting ? (
                   <span className="flex items-center justify-center">
